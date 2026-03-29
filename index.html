@@ -164,9 +164,8 @@ footer a{color:var(--accent2);text-decoration:none}
 <div class="app-wrap">
 
   <div class="sub-bar" id="sub-bar">
-    <span class="sub-bar-lbl">Already subscribed? Enter your email to unlock unlimited access.</span>
-    <input type="email" id="sub-email" placeholder="Your email address">
-    <button class="btn-sub" onclick="checkSub()">Unlock</button>
+    <span class="sub-bar-lbl">Sign in to unlock full access.</span>
+    <a href="https://contactinfinitysolutionsllc-ops.github.io/account/" class="btn-sub" style="text-decoration:none;text-align:center">Sign In →</a>
   </div>
 
   <div style="background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.15);border-radius:12px;padding:.7rem 1.1rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem">
@@ -424,28 +423,7 @@ function updateFreeUI(){const el=document.getElementById('free-count');if(el)el.
 
 // ── SUBSCRIPTION ──────────────────────────────────────────
 let _subCache = null;
-async function isSubscribed(){
-  const email=localStorage.getItem('social_email');
-  if(!email) return false;
-  if(_subCache !== null) return _subCache;
-  try{
-    const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'checkSubscriber',email,app:APP_NAME})});
-    const d=await r.json();
-    _subCache=d.active===true;
-    setTimeout(()=>{ _subCache=null; },5*60*1000);
-    return _subCache;
-  }catch{return false;}
-}
-async function checkSub(){
-  const email=document.getElementById('sub-email').value.trim();
-  if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
-  const btn=document.querySelector('.btn-sub');btn.textContent='Checking…';btn.disabled=true;
-  const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'checkSubscriber',email,app:APP_NAME})});
-  const data=await r.json();
-  if(data.active){localStorage.setItem('social_email',email);subscribedUnlocked=true;_subCache=true;document.getElementById('sub-bar').innerHTML='<span class="sub-bar-lbl" style="color:var(--accent)">✓ Subscribed as '+email+' — unlimited access unlocked.</span>';}
-  else alert('No active subscription found.');
-  btn.textContent='Unlock';btn.disabled=false;
-}
+// isSubscribed → see getStoredSession() below
 
 // ── TOOL SWITCH ───────────────────────────────────────────
 function switchTool(tool,tab){
@@ -696,7 +674,7 @@ async function handlePay(type,emailId){
 }
 
 if(window.location.search.includes('paid=true')){
-  const email=localStorage.getItem('social_pending_email');
+  const email=localStorage.getItem('ig_account_email');
   if(email){
     fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({action:'addSubscriber',email,app:APP_NAME})
@@ -708,14 +686,21 @@ if(window.location.search.includes('paid=true')){
   window.history.replaceState({},'',window.location.pathname);
 }
 
-(async()=>{
-  if(await isSubscribed()){
-    subscribedUnlocked=true;
-    _subCache=true;
-    const email=localStorage.getItem('social_email');
-    if(email) document.getElementById('sub-bar').innerHTML='<span class="sub-bar-lbl" style="color:var(--accent)">✓ Subscribed as '+email+' — unlimited access unlocked.</span>';
+(async () => {
+  const session = getStoredSession();
+  if (session) {
+    subscribedUnlocked = true;
+    _subCache = true;
+    showSignedInBar(session.name, session.email);
+  } else {
+    showSignInBar();
+    // Listen for sign-in from ig-account.js popup
+    window.addEventListener('ig_signed_in', (e) => {
+      subscribedUnlocked = true;
+      _subCache = true;
+      showSignedInBar(e.detail?.name, e.detail?.email);
+    });
   }
-  updateFreeUI();
 })();
 </script>
 <script src="https://contactinfinitysolutionsllc-ops.github.io/account/ig-account.js"></script>
