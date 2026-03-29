@@ -730,7 +730,7 @@ function showSignedInBar(name, email) {
   const lbl = document.getElementById('sub-bar-lbl');
   const btn = document.getElementById('sub-bar-btn');
   if (bar) bar.classList.add('signed-in');
-  if (lbl) { lbl.textContent = '✓ Signed in as ' + (name || email); lbl.classList.add('ok'); }
+  if (lbl) { lbl.textContent = '✓ Subscribed — ' + (name || email); lbl.classList.add('ok'); }
   if (btn) { btn.textContent = 'My Account'; btn.classList.add('signed-in');
              btn.href = 'https://contactinfinitysolutionsllc-ops.github.io/account/'; }
 }
@@ -738,25 +738,57 @@ function showSignInBar() {
   const bar = document.getElementById('sub-bar');
   const lbl = document.getElementById('sub-bar-lbl');
   const btn = document.getElementById('sub-bar-btn');
-  if (bar) bar.classList.remove('signed-in');
+  if (bar) { bar.classList.remove('signed-in'); bar.classList.remove('warn'); }
   if (lbl) { lbl.textContent = 'Sign in to use this tool.'; lbl.classList.remove('ok'); }
   if (btn) { btn.textContent = 'Sign In →'; btn.classList.remove('signed-in');
              btn.href = 'https://contactinfinitysolutionsllc-ops.github.io/account/?return=' + encodeURIComponent(window.location.href); }
+}
+function showSubscribeBar(email) {
+  const bar = document.getElementById('sub-bar');
+  const lbl = document.getElementById('sub-bar-lbl');
+  const btn = document.getElementById('sub-bar-btn');
+  if (bar) { bar.classList.remove('signed-in'); bar.classList.add('warn');
+             bar.style.background='rgba(240,180,41,.07)'; bar.style.borderColor='rgba(240,180,41,.25)'; }
+  if (lbl) { lbl.textContent = 'Signed in as ' + (email||'') + ' — subscribe for unlimited access.'; lbl.classList.remove('ok'); }
+  if (btn) { btn.textContent = 'Subscribe →'; btn.classList.remove('signed-in');
+             btn.href = 'https://contactinfinitysolutionsllc-ops.github.io/account/'; }
+}
+
+
+async function isSubscribed() {
+  if (_subCache !== null) return _subCache;
+  const session = getStoredSession();
+  const email = session?.email || localStorage.getItem('ig_account_email');
+  if (!email) { _subCache = false; return false; }
+  try {
+    const r = await fetch(WORKER_URL, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({action:'checkSubscriber', email, app: APP_NAME})
+    });
+    const d = await r.json();
+    _subCache = d.active === true;
+    setTimeout(() => { _subCache = null; }, 5 * 60 * 1000);
+    return _subCache;
+  } catch(e) { return false; }
 }
 
 (async () => {
   const session = getStoredSession();
   if (session) {
-    subscribedUnlocked = true;
-    _subCache = true;
-    showSignedInBar(session.name, session.email);
+    const subActive = await isSubscribed();
+    if (subActive) {
+      subscribedUnlocked = true; _subCache = true;
+      showSignedInBar(session.name, session.email);
+    } else {
+      showSubscribeBar(session.email);
+    }
   } else {
     showSignInBar();
-    // Listen for sign-in from ig-account.js popup
-    window.addEventListener('ig_signed_in', (e) => {
-      subscribedUnlocked = true;
-      _subCache = true;
-      showSignedInBar(e.detail?.name, e.detail?.email);
+    window.addEventListener('ig_signed_in', async (e) => {
+      const sub = await isSubscribed();
+      if (sub) { subscribedUnlocked = true; _subCache = true;
+                 showSignedInBar(e.detail?.name, e.detail?.email); }
+      else { showSubscribeBar(e.detail?.email); }
     });
   }
 })();
