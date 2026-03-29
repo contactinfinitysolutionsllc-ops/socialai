@@ -52,10 +52,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .panel{display:none;animation:up .25s ease both}
 .panel.active{display:block}
 
-.sub-bar{background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.15);border-radius:12px;padding:.8rem 1rem;display:flex;gap:8px;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap}
-.sub-bar-lbl{font-size:.8rem;color:var(--muted2);width:100%}
-.sub-bar input{flex:1;min-width:180px;padding:.55rem .85rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-family:'Instrument Sans',sans-serif;font-size:.88rem;color:var(--text);outline:none}
-.sub-bar input:focus{border-color:var(--accent)}
 .btn-sub{font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem;padding:.55rem 1.1rem;border-radius:100px;background:var(--accent);color:#fff;border:none;cursor:pointer;white-space:nowrap;transition:all .18s}
 .btn-sub:hover{background:var(--accent2)}
 
@@ -137,6 +133,17 @@ select.fi option{background:var(--bg2)}
 footer{text-align:center;padding:1.5rem;font-size:.72rem;color:var(--muted);border-top:1px solid var(--border)}
 footer a{color:var(--accent2);text-decoration:none}
 @media(max-width:560px){.form-row,.pay-grid{grid-template-columns:1fr}nav{padding:1rem 1.2rem}.calendar-grid{grid-template-columns:repeat(4,1fr)}}
+
+.btn-sub{font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .18s}
+.btn-sub:hover{background:var(--accent2)}
+.btn-sub.signed-in{background:transparent;border:1px solid rgba(52,211,153,.3);color:var(--green);cursor:default}
+.sub-bar{background:rgba(79,142,255,.06);border:1px solid rgba(79,142,255,.15);border-radius:12px;padding:.75rem 1rem;display:flex;gap:.75rem;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;transition:all .3s}
+.sub-bar.signed-in{background:rgba(52,211,153,.06);border-color:rgba(52,211,153,.2)}
+.sub-bar-lbl{font-size:.8rem;color:var(--muted2);flex:1;line-height:1.5}
+.sub-bar-lbl.ok{color:var(--green)}
+.btn-sub{font-family:'Syne',sans-serif;font-weight:700;font-size:.78rem;padding:.45rem 1rem;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .18s}
+.btn-sub:hover{background:var(--accent2)}
+.btn-sub.signed-in{background:transparent;border:1px solid rgba(52,211,153,.3);color:var(--green)}
 </style>
 </head>
 <body>
@@ -164,8 +171,8 @@ footer a{color:var(--accent2);text-decoration:none}
 <div class="app-wrap">
 
   <div class="sub-bar" id="sub-bar">
-    <span class="sub-bar-lbl">Sign in to unlock full access.</span>
-    <a href="https://contactinfinitysolutionsllc-ops.github.io/account/" class="btn-sub" style="text-decoration:none;text-align:center">Sign In →</a>
+    <span class="sub-bar-lbl" id="sub-bar-lbl">Sign in to use this tool.</span>
+    <a href="https://contactinfinitysolutionsllc-ops.github.io/account/" id="sub-bar-btn" class="btn-sub">Sign In →</a>
   </div>
 
   <div style="background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.15);border-radius:12px;padding:.7rem 1.1rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem">
@@ -684,6 +691,57 @@ if(window.location.search.includes('paid=true')){
     });
   }
   window.history.replaceState({},'',window.location.pathname);
+}
+
+// ── SESSION AUTH ─────────────────────────────────────────────────────
+function getStoredSession() {
+  let token = localStorage.getItem('ig_account_token');
+  let email = localStorage.getItem('ig_account_email');
+  let name  = localStorage.getItem('ig_account_name') || email;
+  if (!token) {
+    try {
+      const raw = localStorage.getItem('sb-zcvkgevcrgsujnqovxgd-auth-token');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        const sess = parsed?.currentSession || parsed?.session || parsed;
+        token = sess?.access_token;
+        email = sess?.user?.email;
+        name  = sess?.user?.user_metadata?.name || email;
+        if (token) {
+          localStorage.setItem('ig_account_token', token);
+          localStorage.setItem('ig_account_email', email || '');
+          if (name) localStorage.setItem('ig_account_name', name);
+        }
+      }
+    } catch(e) {}
+  }
+  if (!token || !email) return null;
+  try {
+    const p = JSON.parse(atob(token.split('.')[1]));
+    if (p.exp && Date.now()/1000 > p.exp) {
+      ['ig_account_token','ig_account_email','ig_account_name'].forEach(k=>localStorage.removeItem(k));
+      return null;
+    }
+  } catch(e) { return null; }
+  return { token, email, name };
+}
+function showSignedInBar(name, email) {
+  const bar = document.getElementById('sub-bar');
+  const lbl = document.getElementById('sub-bar-lbl');
+  const btn = document.getElementById('sub-bar-btn');
+  if (bar) bar.classList.add('signed-in');
+  if (lbl) { lbl.textContent = '✓ Signed in as ' + (name || email); lbl.classList.add('ok'); }
+  if (btn) { btn.textContent = 'My Account'; btn.classList.add('signed-in');
+             btn.href = 'https://contactinfinitysolutionsllc-ops.github.io/account/'; }
+}
+function showSignInBar() {
+  const bar = document.getElementById('sub-bar');
+  const lbl = document.getElementById('sub-bar-lbl');
+  const btn = document.getElementById('sub-bar-btn');
+  if (bar) bar.classList.remove('signed-in');
+  if (lbl) { lbl.textContent = 'Sign in to use this tool.'; lbl.classList.remove('ok'); }
+  if (btn) { btn.textContent = 'Sign In →'; btn.classList.remove('signed-in');
+             btn.href = 'https://contactinfinitysolutionsllc-ops.github.io/account/?return=' + encodeURIComponent(window.location.href); }
 }
 
 (async () => {
