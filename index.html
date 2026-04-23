@@ -118,12 +118,15 @@ select.fi option{background:var(--bg2)}
 .pay-box{background:var(--bg2);border:1px solid rgba(244,63,94,.2);border-radius:16px;padding:1.8rem;margin-top:1rem;text-align:center;display:none}
 .pay-box h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.4rem}
 .pay-box p{font-size:.84rem;color:var(--muted2);margin-bottom:1.2rem;font-weight:300}
-.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:420px;margin:0 auto 1rem}
-.pay-opt{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:1rem;cursor:pointer;transition:all .18s;text-align:center}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-width:480px;margin:0 auto 1rem}
+.pay-opt{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:.85rem .7rem;cursor:pointer;transition:all .18s;text-align:center}
 .pay-opt:hover{border-color:var(--accent)}
-.pay-opt.featured{border-color:var(--accent);background:rgba(244,63,94,.06)}
-.pay-price{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:800;color:var(--accent)}
-.pay-label{font-size:.74rem;color:var(--muted2);margin-top:3px}
+.pay-opt.pw-annual{border-color:rgba(240,180,41,.45);background:rgba(240,180,41,.06)}
+.pay-opt.pw-monthly{border-color:rgba(244,63,94,.35)}
+.pay-opt.pw-session{opacity:.85}
+.pw-badge{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#f0b429;margin-bottom:.25rem}
+.pay-price{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;color:var(--accent)}
+.pay-label{font-size:.68rem;color:var(--muted2);margin-top:3px}
 .pay-email{width:100%;max-width:380px;margin:0 auto .8rem;display:block;padding:.65rem .9rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;font-family:'Instrument Sans',sans-serif;font-size:.9rem;color:var(--text);outline:none}
 .pay-email:focus{border-color:var(--accent)}
 
@@ -175,7 +178,7 @@ footer a{color:var(--accent2);text-decoration:none}
     <a href="https://contactinfinitysolutionsllc-ops.github.io/account/" id="sub-bar-btn" class="btn-sub">Sign In →</a>
   </div>
 
-  <div style="background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.15);border-radius:12px;padding:.7rem 1.1rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem">
+  <div id="free-banner" style="background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.15);border-radius:12px;padding:.7rem 1.1rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:.5rem">
     <div style="font-size:.83rem;color:var(--accent2)">Free posts remaining: <strong id="free-count">5</strong> of 5 this month</div>
     <div style="font-size:.72rem;color:var(--muted)">Resets monthly</div>
   </div>
@@ -217,6 +220,7 @@ footer a{color:var(--accent2);text-decoration:none}
           <button class="tone-btn" data-tone="urgent and promotional" onclick="setTone(this,'cap-tone-row')">Promotional</button>
         </div>
       </div>
+      <div id="captions-err" style="display:none;margin-top:.8rem;padding:.7rem 1rem;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:10px;font-size:.82rem;color:#ff6b6b;"></div>
       <button class="btn btn-p" onclick="runTool('captions')">Generate Captions →</button>
     </div>
     <div class="loading" id="captions-loading"><div class="spinner"></div><p>Writing your captions…</p></div>
@@ -226,8 +230,9 @@ footer a{color:var(--accent2);text-decoration:none}
       <p>You've used your 5 free posts. Subscribe for unlimited.</p>
       <input type="email" class="pay-email" id="captions-pay-email" placeholder="Your email address">
       <div class="pay-grid">
-        <div class="pay-opt" onclick="handlePay('single','captions-pay-email')"><div class="pay-price">$2.99</div><div class="pay-label">5 captions</div></div>
-        <div class="pay-opt featured" onclick="handlePay('monthly','captions-pay-email')"><div class="pay-price">$15/mo</div><div class="pay-label">Unlimited · best value</div></div>
+        <div class="pay-opt pw-annual" onclick="handlePay('annual','captions-pay-email')"><div class="pw-badge">Best Value</div><div class="pay-price">$99/yr</div><div class="pay-label">Annual · save 31%</div></div>
+        <div class="pay-opt pw-monthly" onclick="handlePay('monthly','captions-pay-email')"><div class="pay-price">$12/mo</div><div class="pay-label">Monthly</div></div>
+        <div class="pay-opt pw-session" onclick="handlePay('session','captions-pay-email')"><div class="pay-price">$0.99</div><div class="pay-label">24-hr pass</div></div>
       </div>
       <p style="font-size:.7rem;color:var(--muted)">Secured by Square · Cancel anytime</p>
     </div>
@@ -259,6 +264,7 @@ footer a{color:var(--accent2);text-decoration:none}
           <option value="twice daily">Twice daily</option>
         </select>
       </div>
+      <div id="calendar-err" style="display:none;margin-top:.8rem;padding:.7rem 1rem;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:10px;font-size:.82rem;color:#ff6b6b;"></div>
       <button class="btn btn-p" onclick="runTool('calendar')">Generate My Calendar →</button>
     </div>
     <div class="loading" id="calendar-loading"><div class="spinner"></div><p>Building your 30-day content calendar…</p></div>
@@ -274,8 +280,9 @@ footer a{color:var(--accent2);text-decoration:none}
       <p>A full month of post ideas — subscribe for unlimited months.</p>
       <input type="email" class="pay-email" id="calendar-pay-email" placeholder="Your email address">
       <div class="pay-grid">
-        <div class="pay-opt" onclick="handlePay('single','calendar-pay-email')"><div class="pay-price">$4.99</div><div class="pay-label">One calendar</div></div>
-        <div class="pay-opt featured" onclick="handlePay('monthly','calendar-pay-email')"><div class="pay-price">$15/mo</div><div class="pay-label">Unlimited · best value</div></div>
+        <div class="pay-opt pw-annual" onclick="handlePay('annual','calendar-pay-email')"><div class="pw-badge">Best Value</div><div class="pay-price">$99/yr</div><div class="pay-label">Annual · save 31%</div></div>
+        <div class="pay-opt pw-monthly" onclick="handlePay('monthly','calendar-pay-email')"><div class="pay-price">$12/mo</div><div class="pay-label">Monthly</div></div>
+        <div class="pay-opt pw-session" onclick="handlePay('session','calendar-pay-email')"><div class="pay-price">$0.99</div><div class="pay-label">24-hr pass</div></div>
       </div>
       <p style="font-size:.7rem;color:var(--muted)">Secured by Square</p>
     </div>
@@ -299,19 +306,24 @@ footer a{color:var(--accent2);text-decoration:none}
           <button class="plat-btn" data-p="Pinterest" onclick="setSingle(this,'ht-platforms')">📌 Pinterest</button>
         </div>
       </div>
+      <div id="hashtags-err" style="display:none;margin-top:.8rem;padding:.7rem 1rem;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:10px;font-size:.82rem;color:#ff6b6b;"></div>
       <button class="btn btn-p" onclick="runTool('hashtags')">Generate Hashtag Sets →</button>
     </div>
     <div class="loading" id="hashtags-loading"><div class="spinner"></div><p>Building your hashtag strategy…</p></div>
     <div class="output-card" id="hashtags-output">
       <div class="output-content" id="hashtags-result"></div>
-      <div class="out-actions"><button class="btn-copy" onclick="copyOut('hashtags-result',this)">📋 Copy all sets</button></div>
+      <div class="out-actions">
+        <button class="btn-copy" onclick="copyOut('hashtags-result',this)">📋 Copy all sets</button>
+        <button class="btn-copy" onclick="dlOut('hashtags-result','hashtag-sets')">⬇ Download</button>
+      </div>
     </div>
     <div class="pay-box" id="hashtags-pay">
       <h3>Get your hashtag sets</h3>
       <input type="email" class="pay-email" id="hashtags-pay-email" placeholder="Your email address">
       <div class="pay-grid">
-        <div class="pay-opt" onclick="handlePay('single','hashtags-pay-email')"><div class="pay-price">$1.99</div><div class="pay-label">One set</div></div>
-        <div class="pay-opt featured" onclick="handlePay('monthly','hashtags-pay-email')"><div class="pay-price">$15/mo</div><div class="pay-label">Unlimited</div></div>
+        <div class="pay-opt pw-annual" onclick="handlePay('annual','hashtags-pay-email')"><div class="pw-badge">Best Value</div><div class="pay-price">$99/yr</div><div class="pay-label">Annual · save 31%</div></div>
+        <div class="pay-opt pw-monthly" onclick="handlePay('monthly','hashtags-pay-email')"><div class="pay-price">$12/mo</div><div class="pay-label">Monthly</div></div>
+        <div class="pay-opt pw-session" onclick="handlePay('session','hashtags-pay-email')"><div class="pay-price">$0.99</div><div class="pay-label">24-hr pass</div></div>
       </div>
     </div>
   </div>
@@ -335,19 +347,24 @@ footer a{color:var(--accent2);text-decoration:none}
           <button class="plat-btn" data-p="LinkedIn" onclick="setSingle(this,'id-platforms')">💼 LinkedIn</button>
         </div>
       </div>
+      <div id="ideas-err" style="display:none;margin-top:.8rem;padding:.7rem 1rem;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:10px;font-size:.82rem;color:#ff6b6b;"></div>
       <button class="btn btn-p" onclick="runTool('ideas')">Generate 20 Post Ideas →</button>
     </div>
     <div class="loading" id="ideas-loading"><div class="spinner"></div><p>Generating post ideas…</p></div>
     <div class="output-card" id="ideas-output">
       <div class="output-content" id="ideas-result"></div>
-      <div class="out-actions"><button class="btn-copy" onclick="copyOut('ideas-result',this)">📋 Copy all ideas</button></div>
+      <div class="out-actions">
+        <button class="btn-copy" onclick="copyOut('ideas-result',this)">📋 Copy all ideas</button>
+        <button class="btn-copy" onclick="dlOut('ideas-result','post-ideas')">⬇ Download</button>
+      </div>
     </div>
     <div class="pay-box" id="ideas-pay">
       <h3>Get your post ideas</h3>
       <input type="email" class="pay-email" id="ideas-pay-email" placeholder="Your email address">
       <div class="pay-grid">
-        <div class="pay-opt" onclick="handlePay('single','ideas-pay-email')"><div class="pay-price">$2.99</div><div class="pay-label">20 ideas</div></div>
-        <div class="pay-opt featured" onclick="handlePay('monthly','ideas-pay-email')"><div class="pay-price">$15/mo</div><div class="pay-label">Unlimited</div></div>
+        <div class="pay-opt pw-annual" onclick="handlePay('annual','ideas-pay-email')"><div class="pw-badge">Best Value</div><div class="pay-price">$99/yr</div><div class="pay-label">Annual · save 31%</div></div>
+        <div class="pay-opt pw-monthly" onclick="handlePay('monthly','ideas-pay-email')"><div class="pay-price">$12/mo</div><div class="pay-label">Monthly</div></div>
+        <div class="pay-opt pw-session" onclick="handlePay('session','ideas-pay-email')"><div class="pay-price">$0.99</div><div class="pay-label">24-hr pass</div></div>
       </div>
     </div>
   </div>
@@ -382,6 +399,7 @@ footer a{color:var(--accent2);text-decoration:none}
           <button class="plat-btn" data-p="YouTube Shorts" onclick="togglePlat(this,'st-platforms')">▶️ YouTube</button>
         </div>
       </div>
+      <div id="strategy-err" style="display:none;margin-top:.8rem;padding:.7rem 1rem;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);border-radius:10px;font-size:.82rem;color:#ff6b6b;"></div>
       <button class="btn btn-p" onclick="runTool('strategy')">Build My Strategy →</button>
     </div>
     <div class="loading" id="strategy-loading"><div class="spinner"></div><p>Building your custom strategy…</p></div>
@@ -396,8 +414,9 @@ footer a{color:var(--accent2);text-decoration:none}
       <h3>Get your custom strategy</h3>
       <input type="email" class="pay-email" id="strategy-pay-email" placeholder="Your email address">
       <div class="pay-grid">
-        <div class="pay-opt" onclick="handlePay('single','strategy-pay-email')"><div class="pay-price">$4.99</div><div class="pay-label">One strategy</div></div>
-        <div class="pay-opt featured" onclick="handlePay('monthly','strategy-pay-email')"><div class="pay-price">$15/mo</div><div class="pay-label">Unlimited</div></div>
+        <div class="pay-opt pw-annual" onclick="handlePay('annual','strategy-pay-email')"><div class="pw-badge">Best Value</div><div class="pay-price">$99/yr</div><div class="pay-label">Annual · save 31%</div></div>
+        <div class="pay-opt pw-monthly" onclick="handlePay('monthly','strategy-pay-email')"><div class="pay-price">$12/mo</div><div class="pay-label">Monthly</div></div>
+        <div class="pay-opt pw-session" onclick="handlePay('session','strategy-pay-email')"><div class="pay-price">$0.99</div><div class="pay-label">24-hr pass</div></div>
       </div>
     </div>
   </div>
@@ -417,7 +436,10 @@ footer a{color:var(--accent2);text-decoration:none}
 
 <script>
 const WORKER_URL = 'https://justdocs-worker.robertjosephreynolds.workers.dev';
-const APP_NAME   = 'socialai';
+const APP_NAME          = 'socialai';
+const APP_URL           = 'https://contactinfinitysolutionsllc-ops.github.io/socialai/';
+const SQUARE_MONTHLY_URL = 'https://square.link/u/pCpKBYg8'; // replace with Square monthly plan link once created
+const SQUARE_ANNUAL_URL  = 'https://square.link/u/zRrTqrz3'; // replace with Square annual plan link once created
 const FREE_KEY   = 'social_free';
 const FREE_LIMIT = 5;
 let subscribedUnlocked = false;
@@ -577,10 +599,22 @@ Be specific to ${niche} and ${audience} — not generic social media advice.`;
   return null;
 }
 
+function showToolErr(tool, msg){
+  const el=document.getElementById(tool+'-err');
+  if(!el) return;
+  el.textContent=msg||'Please fill in the required fields.';
+  el.style.display='block';
+}
+function clearToolErr(tool){
+  const el=document.getElementById(tool+'-err');
+  if(el) el.style.display='none';
+}
+
 // ── RUN TOOL ─────────────────────────────────────────────
 async function runTool(tool){
+  clearToolErr(tool);
   const prompt=buildPrompt(tool);
-  if(!prompt){alert('Please fill in the required fields.');return;}
+  if(!prompt){showToolErr(tool,'Please fill in all required fields.');return;}
   const sub=subscribedUnlocked||await isSubscribed();
   if(!sub&&getFree()>=FREE_LIMIT&&tool==='captions'){
     document.getElementById(tool+'-pay').style.display='block';
@@ -604,90 +638,127 @@ async function runGenerate(tool,prompt,sub){
   loadEl.style.display='block';
   if(btn) btn.disabled=true;
   try{
-    const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'claude',prompt})});
+    const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'claude',prompt,email:getStoredSession()?.email||localStorage.getItem('ig_account_email')||''})});
     const data=await r.json();
-    if(tool==='captions') renderCaptions(data.result||'');
-    else{
-      document.getElementById(tool+'-result').textContent=data.result||'';
-      outEl.classList.add('show');
+    if(data.result){
+      if(tool==='captions') renderCaptions(data.result);
+      else{
+        document.getElementById(tool+'-result').textContent=data.result;
+        outEl.classList.add('show');
+      }
+      if(!sub&&tool==='captions') incFree();
+    } else {
+      showToolErr(tool,'Something went wrong. Please try again.');
     }
-    if(!sub&&tool==='captions') incFree();
-  }catch{alert('Error generating. Please try again.');}
+  }catch{
+    showToolErr(tool,'Something went wrong. Please try again.');
+  }
   loadEl.style.display='none';
   if(btn) btn.disabled=false;
+}
+
+function parseCaptionBlock(block){
+  const u=block.toUpperCase();
+  const platIdx=u.indexOf('PLATFORM:');
+  const capIdx=u.indexOf('CAPTION:');
+  const htIdx=u.indexOf('HASHTAGS:');
+  const plat=platIdx!==-1?block.slice(platIdx+9,u.indexOf('\n',platIdx)!==-1?u.indexOf('\n',platIdx):undefined).trim():'';
+  const cap=capIdx!==-1?block.slice(capIdx+8,htIdx!==-1?htIdx:undefined).replace(/^[\s\n]+/,'').trim():block.trim();
+  const ht=htIdx!==-1?block.slice(htIdx+9).replace(/^[\s\n]+/,'').trim():'';
+  return{plat,cap,ht};
 }
 
 function renderCaptions(raw){
   const blocks=raw.split(/---+/).filter(b=>b.trim());
   const container=document.getElementById('captions-output');
   container.innerHTML='';
-  if(blocks.length<=1){
-    container.innerHTML=`<div class="post-card"><div class="post-body">${raw}</div></div>`;
-  }else{
-    blocks.forEach((block,i)=>{
-      const platM=block.match(/PLATFORM:\s*(.+)/i);
-      const capM=block.match(/CAPTION:\s*([\s\S]*?)(?=HASHTAGS:|$)/i);
-      const htM=block.match(/HASHTAGS:\s*(.+)/i);
-      const plat=platM?platM[1].trim():`Post ${i+1}`;
-      const cap=capM?capM[1].trim():block;
-      const ht=htM?htM[1].trim():'';
-      const div=document.createElement('div');
-      div.className='post-card';
-      div.innerHTML=`<div class="post-card-top"><span class="post-platform">${plat}</span><span class="post-num">Post ${i+1}</span></div>
-        <div class="post-body">${cap.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
-        ${ht?`<div class="post-hashtags">${ht}</div>`:''}
-        <div class="post-actions">
-          <button class="btn-copy" onclick="copyPost(this,'${encodeURIComponent(cap+'\n\n'+ht)}')">📋 Copy</button>
-        </div>`;
-      container.appendChild(div);
-    });
-  }
+  const items=blocks.length>1?blocks:[raw];
+  items.forEach((block,i)=>{
+    const{plat,cap,ht}=parseCaptionBlock(block);
+    const label=plat||`Post ${i+1}`;
+    const fullText='Platform: '+label+'\n\n'+cap+(ht?'\n\n'+ht:'');
+    const div=document.createElement('div');
+    div.className='post-card';
+    div.innerHTML=`<div class="post-card-top"><span class="post-platform">${label}</span><span class="post-num">Post ${i+1}</span></div>
+      <div class="post-body">${cap.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      ${ht?`<div class="post-hashtags">${ht.replace(/</g,'&lt;')}</div>`:''}
+      <div class="post-actions">
+        <button class="btn-copy" onclick="copyPost(this,'${encodeURIComponent(fullText)}')">📋 Copy</button>
+        <button class="btn-copy" onclick="dlPost('${encodeURIComponent(fullText)}','${label.toLowerCase().replace(/[^a-z0-9]/g,'-')}')">⬇ Download</button>
+      </div>`;
+    container.appendChild(div);
+  });
   container.style.display='block';
   container.scrollIntoView({behavior:'smooth'});
 }
 
 function copyPost(btn,encoded){
+  const orig=btn.textContent;
   navigator.clipboard.writeText(decodeURIComponent(encoded)).then(()=>{
     btn.textContent='✓ Copied!';btn.classList.add('ok');
-    setTimeout(()=>{btn.textContent='📋 Copy';btn.classList.remove('ok');},2000);
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('ok');},2000);
   });
+}
+function dlPost(encoded,slug){
+  const text=decodeURIComponent(encoded);
+  const a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(text);
+  a.download='caption-'+slug+'-'+new Date().toISOString().slice(0,10)+'.txt';
+  a.click();
 }
 
 function copyOut(id,btn){
+  const orig=btn.textContent;
   navigator.clipboard.writeText(document.getElementById(id)?.textContent||'').then(()=>{
     btn.textContent='✓ Copied!';btn.classList.add('ok');
-    setTimeout(()=>{btn.textContent='📋 Copy';btn.classList.remove('ok');},2000);
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('ok');},2000);
   });
 }
 function dlOut(id,filename){
+  const text=document.getElementById(id)?.textContent||'';
+  if(!text) return;
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([document.getElementById(id)?.textContent||''],{type:'text/plain'}));
-  a.download=filename+'.txt';a.click();
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(text);
+  a.download=filename+'-'+new Date().toISOString().slice(0,10)+'.txt';
+  a.click();
 }
 
 // ── PAYMENT ───────────────────────────────────────────────
-async function handlePay(type,emailId){
-  const email=document.getElementById(emailId).value.trim();
-  if(!email||!email.includes('@')){alert('Please enter your email first.');return;}
+async function handlePay(plan,emailId){
+  const emailEl=document.getElementById(emailId);
+  const email=emailEl?.value.trim()||'';
+  if(!email||!email.includes('@')){
+    if(emailEl){emailEl.style.borderColor='var(--red)';setTimeout(()=>emailEl.style.borderColor='',2000);}
+    return;
+  }
   localStorage.setItem('social_pending_email',email);
-  const amount=type==='monthly'?15.00:4.99;
-  const label=type==='monthly'?'SocialAI – Monthly Unlimited':'SocialAI – Single';
-  const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'createPaymentLink',docType:label,amount,
-      redirectUrl:'https://contactinfinitysolutionsllc-ops.github.io/socialai/?paid=true'})});
-  const data=await r.json();
-  if(data.url) window.location.href=data.url;
-  else alert('Could not create payment link. Please try again.');
+  localStorage.setItem('social_pending_plan',plan);
+  if(plan==='annual'&&SQUARE_ANNUAL_URL){window.location.href=SQUARE_ANNUAL_URL;return;}
+  if(plan==='monthly'&&SQUARE_MONTHLY_URL){window.location.href=SQUARE_MONTHLY_URL;return;}
+  const amounts={annual:99,monthly:12,session:0.99};
+  const labels={annual:'Infinity Hub – Annual',monthly:'Infinity Hub – Monthly',session:'Infinity Hub – Session Pass'};
+  try{
+    const r=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'createPaymentLink',docType:labels[plan],amount:amounts[plan],
+        redirectUrl:APP_URL+'?paid=true&plan='+plan})});
+    const data=await r.json();
+    if(data.url) window.location.href=data.url;
+    else alert('Could not create payment link. Please try again.');
+  }catch{alert('Payment error. Please try again.');}
 }
 
 if(window.location.search.includes('paid=true')){
-  const email=localStorage.getItem('ig_account_email');
+  const email=localStorage.getItem('social_pending_email');
+  const plan=new URLSearchParams(window.location.search).get('plan')
+            ||localStorage.getItem('social_pending_plan')||'monthly';
   if(email){
     fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'addSubscriber',email,app:APP_NAME})
+      body:JSON.stringify({action:'addSubscriber',email,app:APP_NAME,plan})
     }).then(()=>{
       localStorage.setItem('social_email',email);subscribedUnlocked=true;_subCache=true;
-      localStorage.removeItem('social_pending_email');updateFreeUI();
+      localStorage.removeItem('social_pending_email');
+      localStorage.removeItem('social_pending_plan');
+      updateFreeUI();
     });
   }
   window.history.replaceState({},'',window.location.pathname);
@@ -772,6 +843,8 @@ async function isSubscribed() {
   } catch(e) { return false; }
 }
 
+updateFreeUI();
+
 (async () => {
   const session = getStoredSession();
   if (session) {
@@ -779,6 +852,8 @@ async function isSubscribed() {
     if (subActive) {
       subscribedUnlocked = true; _subCache = true;
       showSignedInBar(session.name, session.email);
+      const fb=document.getElementById('free-banner');
+      if(fb) fb.style.display='none';
     } else {
       showSubscribeBar(session.email);
     }
@@ -786,13 +861,15 @@ async function isSubscribed() {
     showSignInBar();
     window.addEventListener('ig_signed_in', async (e) => {
       const sub = await isSubscribed();
-      if (sub) { subscribedUnlocked = true; _subCache = true;
-                 showSignedInBar(e.detail?.name, e.detail?.email); }
-      else { showSubscribeBar(e.detail?.email); }
+      if (sub) {
+        subscribedUnlocked = true; _subCache = true;
+        showSignedInBar(e.detail?.name, e.detail?.email);
+        const fb=document.getElementById('free-banner');
+        if(fb) fb.style.display='none';
+      } else { showSubscribeBar(e.detail?.email); }
     });
   }
 })();
 </script>
-<script src="https://contactinfinitysolutionsllc-ops.github.io/account/ig-account.js"></script>
 </body>
 </html>
